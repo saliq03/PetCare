@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:petcare/dependency_injection.dart';
+import 'package:petcare/presentation/auth/pages/login_page.dart';
 import 'package:petcare/presentation/splash/pages/splash.dart';
 
 import 'core/config/theme/app_theme.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'PetCare',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      home: const SplashPage(),
+      home: SplashPage(),
     );
   }
 }

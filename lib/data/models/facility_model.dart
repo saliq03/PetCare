@@ -9,6 +9,10 @@ class Facility {
   final String imageUrl;
   final String description;
   final String location;
+  final List<String> services;
+  final String address;
+  final String phone;
+  final String hours;
 
   Facility({
     required this.id,
@@ -21,6 +25,10 @@ class Facility {
     required this.imageUrl,
     required this.description,
     required this.location,
+    required this.services,
+    required this.address,
+    required this.phone,
+    required this.hours,
   });
 
   factory Facility.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,16 @@ class Facility {
       imageUrl: json['imageUrl'],
       description: json['description'],
       location: json['location'],
+      services: List<String>.from(json['services']),
+      address: json['address'],
+      phone: json['phone'],
+      hours: json['hours'],
     );
   }
+
+  String get priceRange => 'From ₹$price';
+
+  String get distanceText => '${distance}km away';
+
+  String get ratingText => rating.toStringAsFixed(1);
 }

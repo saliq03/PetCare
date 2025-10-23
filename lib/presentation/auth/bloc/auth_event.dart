@@ -25,6 +25,4 @@ class VerifyOtpEvent extends AuthEvent {
   List<Object> get props => [otp];
 }
 
-class LogoutEvent extends AuthEvent {}
 
-class CheckAuthStatusEvent extends AuthEvent {}

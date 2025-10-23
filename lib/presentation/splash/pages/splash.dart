@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:petcare/presentation/home/pages/home_page.dart';
+import 'package:petcare/presentation/main/pages/main_page.dart';
 
 import '../../../core/config/constants/app_constants.dart';
 import '../../../core/config/theme/app_theme.dart';
+import '../../location/bloc/location_bloc.dart';
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -17,6 +20,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    // locationBloc.add(LoadLocationsEvent());
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -32,7 +36,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
 
   void _navigateToNext() async {
     await Future.delayed(const Duration(seconds: 3));
-    Navigator.pushReplacementNamed(context, '/login');
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>MainPage()));
   }
 
   @override
