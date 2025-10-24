@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:petcare/common/widgets/ui_helper.dart';
 
 import '../../../data/models/facility_model.dart';
 import '../../booking/bloc/booking_bloc.dart';
@@ -210,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                     return BlocBuilder<HomeBloc, HomeState>(
                       builder: (context, state) {
                         if (state is HomeLoading) {
-                          return const Center(child: CircularProgressIndicator());
+                          return loadingWidget();
                         }
 
                         if (state is HomeError) {
@@ -239,47 +240,49 @@ class _HomePageState extends State<HomePage> {
 
                         if (state is HomeLoaded) {
                           if (state.filteredFacilities.isEmpty) {
-                            return Container(
-                              padding: const EdgeInsets.all(32),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.search_off,
-                                    size: 64,
-                                    color: Colors.grey[400],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'No facilities found',
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: Colors.grey[600],
+                            return Center(
+                              child: Container(
+                                padding: const EdgeInsets.all(32),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.search_off,
+                                      size: 64,
+                                      color: Colors.grey[400],
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    state.searchQuery.isNotEmpty
-                                        ? 'Try adjusting your search or filters'
-                                        : 'No facilities available in ${state.location}',
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey[500],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  if (state.searchQuery.isNotEmpty || state.selectedCategory != 'All')
                                     const SizedBox(height: 16),
-                                  if (state.searchQuery.isNotEmpty || state.selectedCategory != 'All')
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _homeBloc.add(ClearFiltersEvent());
-                                        _searchController.clear();
-                                      },
-                                      child: const Text('Clear Filters'),
+                                    Text(
+                                      'No facilities found',
+                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                        color: Colors.grey[600],
+                                      ),
                                     ),
-                                ],
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      state.searchQuery.isNotEmpty
+                                          ? 'Try adjusting your search or filters'
+                                          : 'No facilities available in ${state.location}',
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.grey[500],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    if (state.searchQuery.isNotEmpty || state.selectedCategory != 'All')
+                                      const SizedBox(height: 16),
+                                    if (state.searchQuery.isNotEmpty || state.selectedCategory != 'All')
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _homeBloc.add(ClearFiltersEvent());
+                                          _searchController.clear();
+                                        },
+                                        child: const Text('Clear Filters'),
+                                      ),
+                                  ],
+                                ),
                               ),
                             );
                           }
@@ -294,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                               SizedBox(height: 16.h),
                               GridView.builder(
                                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
@@ -350,6 +353,23 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget loadingWidget(){
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: 6,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return UiHelper.shimmerWidget(width: 100, height: 100,borderRadius: 12.sp);
+      },
     );
   }
 }

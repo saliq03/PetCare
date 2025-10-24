@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:petcare/data/repository/my_bookings.dart';
 
 import '../../../data/models/booking_model.dart';
 import '../../../data/models/facility_model.dart';
@@ -20,9 +23,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   FutureOr<void> _onLoadFacilityDetails(LoadFacilityDetailsEvent event, Emitter<BookingState> emit) async {
     emit(BookingLoading());
-
-    // Simulate API call delay
-    await Future.delayed(const Duration(milliseconds: 500));
 
     try {
       final facility = DummyData.facilities.firstWhere(
@@ -89,8 +89,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   FutureOr<void> _onConfirmBooking(ConfirmBookingEvent event, Emitter<BookingState> emit) async {
     emit(BookingLoading());
 
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 2));
 
     try {
       final booking = Booking(
@@ -105,7 +103,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       );
 
       // Save to local storage (in real app, this would be to backend)
-      _saveBookingLocally(booking);
+      _saveBookingLocally(booking,event.context);
 
       emit(BookingConfirmed(booking));
     } catch (e) {
@@ -117,9 +115,21 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     return petType.isNotEmpty && timeSlot.isNotEmpty;
   }
 
-  void _saveBookingLocally(Booking booking) {
-    // In a real app, this would save to shared preferences or local database
-    // For now, we'll just keep it in memory and the bookings page will use dummy data
-    print('Booking saved: ${booking.bookingId}');
+  void _saveBookingLocally(Booking booking,BuildContext context) {
+    MyBookingsRepository.addBooking(booking);
+    Navigator.pop(context);
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: const Text('Booking added successfully!'),
+    //     behavior: SnackBarBehavior.floating,
+    //     backgroundColor: Colors.green,
+    //     duration: const Duration(seconds: 2),
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(12),
+    //     ),
+    //     margin: const EdgeInsets.all(16),
+    //   ),
+    // );
+
   }
 }

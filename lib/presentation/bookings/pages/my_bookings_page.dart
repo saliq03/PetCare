@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:petcare/common/widgets/ui_helper.dart';
 import 'package:petcare/core/config/constants/status.dart';
 
 import '../bloc/bookings_bloc.dart';
@@ -61,7 +62,7 @@ class MyBookingsPage extends StatelessWidget {
       body: BlocBuilder<BookingsBloc, BookingsState>(
         builder: (context, state) {
           if (state.status==Status.loading || state.status==Status.initial) {
-            return const Center(child: CircularProgressIndicator());
+            return loadingWidget();
           }
           if (state.status==Status.error) {
             return Center(
@@ -215,12 +216,44 @@ class MyBookingsPage extends StatelessWidget {
 
 
           }
-          return const Center(child: CircularProgressIndicator());
+          return loadingWidget();
 
 
         },
       ),
     ),
 );
+  }
+
+  Widget loadingWidget(){
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        children: [
+          Row(children: [
+            Expanded(child: UiHelper.shimmerWidget(width: 100, height: 30.h,borderRadius: 12.r)),
+            SizedBox(width: 40.w,),
+            Expanded(child: UiHelper.shimmerWidget(width: 130, height: 50.h,borderRadius: 12.r)),
+            SizedBox(width: 40.w,),
+            Expanded(child: UiHelper.shimmerWidget(width: 130, height: 50.h,borderRadius: 12.r)),
+
+
+          ],),
+          SizedBox(height: 20.h,),
+          ListView.builder(
+            itemCount: 2,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: UiHelper.shimmerWidget(width: double.infinity, height: 200.h),
+              );
+            },
+          )
+
+        ],
+      ),
+    );
   }
 }

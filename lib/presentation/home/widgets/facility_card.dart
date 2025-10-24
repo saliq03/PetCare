@@ -30,27 +30,30 @@ class FacilityCard extends StatelessWidget {
             // Facility Image
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12.r),
-                    topRight: Radius.circular(12.r),
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: facility.imageUrl,
-                    height: 110.h,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      height: 110.h,
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                Hero(
+                  tag: facility.imageUrl,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12.r),
+                      topRight: Radius.circular(12.r),
                     ),
-                    errorWidget: (context, url, error) => Container(
-                      height: 120,
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.error),
+                    child: CachedNetworkImage(
+                      imageUrl: facility.imageUrl,
+                      height: 110.h,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        height: 110.h,
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 120,
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.error),
+                      ),
                     ),
                   ),
                 ),

@@ -50,6 +50,7 @@ class ConfirmBookingEvent extends BookingEvent {
   final DateTime date;
   final String timeSlot;
   final double price;
+  final BuildContext context;
 
   const ConfirmBookingEvent({
     required this.facilityId,
@@ -58,8 +59,9 @@ class ConfirmBookingEvent extends BookingEvent {
     required this.date,
     required this.timeSlot,
     required this.price,
+    required this.context
   });
 
   @override
-  List<Object> get props => [facilityId, facilityName, petType, date, timeSlot, price];
+  List<Object> get props => [facilityId, facilityName, petType, date, timeSlot, price,context];
 }

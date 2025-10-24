@@ -6,9 +6,11 @@ import 'package:petcare/presentation/auth/pages/login_page.dart';
 import 'package:petcare/presentation/splash/pages/splash.dart';
 
 import 'core/config/theme/app_theme.dart';
+import 'data/repository/my_bookings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MyBookingsRepository.initializeDummyData();
   await setupDependencies();
   runApp(const MyApp());
 }

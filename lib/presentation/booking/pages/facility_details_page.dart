@@ -74,26 +74,11 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
         ),
         // In facility_details_page.dart, update the success dialog actions
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Go back to home
-            },
-            child: const Text('Back to Home'),
-          ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context); // Close dialog
-              // Navigate to My Bookings page
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const MainPage()),
-                    (route) => false,
-              );
-              // Change tab to bookings
-              // You might need to use a different navigation approach for this
-            },
-            child: const Text('View Bookings'),
+             },
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -176,24 +161,27 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Facility Image
-          Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CachedNetworkImage(
-                imageUrl: facility.imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: Colors.grey[200],
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: Colors.grey[200],
-                  child: const Icon(Icons.error),
+          Hero(
+            tag: facility.imageUrl,
+            child: Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  imageUrl: facility.imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[200],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.error),
+                  ),
                 ),
               ),
             ),
@@ -425,6 +413,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
                         date: state.selectedDate,
                         timeSlot: state.selectedTimeSlot,
                         price: facility.price,
+                        context: context
                       ),
                     );
                   }

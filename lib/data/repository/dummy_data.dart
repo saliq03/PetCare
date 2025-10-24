@@ -1,3 +1,5 @@
+import 'package:petcare/data/models/booking_model.dart';
+
 import '../models/facility_model.dart';
 
 class DummyData {
@@ -115,4 +117,6 @@ class DummyData {
       hours: '9:00 AM - 6:00 PM',
     ),
   ];
+
+
 }

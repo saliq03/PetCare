@@ -7,6 +7,7 @@ import 'package:petcare/core/config/constants/status.dart';
 import 'package:petcare/dependency_injection.dart';
 import 'package:petcare/presentation/auth/pages/login_page.dart';
 
+import '../../../common/widgets/ui_helper.dart';
 import '../../../data/models/user_model.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/pet_card.dart';
@@ -91,7 +92,7 @@ class ProfilePage extends StatelessWidget {
         body: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
             if (state.status == Status.initial || state.status == Status.loading) {
-              return const Center(child: CircularProgressIndicator());
+              return loadingWidget();
             }
 
             if (state.status == Status.error) {
@@ -337,6 +338,37 @@ class ProfilePage extends StatelessWidget {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
+  Widget loadingWidget(){
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        children: [
+          UiHelper.shimmerWidget(width: double.infinity, height: 200.h,borderRadius: 12.r),
+          SizedBox(height: 20.h,),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              UiHelper.shimmerWidget(width: 100, height: 20.h,borderRadius: 12.r),
+              UiHelper.shimmerWidget(width: 100, height: 20.h,borderRadius: 12.r),
+
+            ],),
+          SizedBox(height: 10.h,),
+          ListView.builder(
+            itemCount: 4,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: UiHelper.shimmerWidget(width: double.infinity, height: 40.h,borderRadius: 12.r),
+              );
+            },
+          )
+
         ],
       ),
     );
