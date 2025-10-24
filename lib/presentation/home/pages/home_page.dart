@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../data/models/facility_model.dart';
 import '../../booking/bloc/booking_bloc.dart';
@@ -27,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _homeBloc = HomeBloc();
-    _locationBloc=LocationBloc();
+    _locationBloc = LocationBloc()..add(LoadLocationsEvent());
   }
 
   @override
@@ -44,10 +46,14 @@ class _HomePageState extends State<HomePage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return const LocationModalSheet();
+        return BlocProvider.value(
+          value: _locationBloc, // reuse the existing bloc instance
+          child: const LocationModalSheet(),
+        );
       },
     );
   }
+
 
   void _loadFacilities(String location) {
     _homeBloc.add(LoadFacilitiesEvent(location));
@@ -84,9 +90,10 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: Text(
             'PetCare',
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+            style: GoogleFonts.inter(
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+              fontSize: 25.sp,
+              color: Color(0xFF3F09AB),
             ),
           ),
           backgroundColor: Colors.white,
@@ -96,10 +103,10 @@ class _HomePageState extends State<HomePage> {
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: Color(0xFF3F09AB).withOpacity(.8),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.person, size: 20),
+                child: const Icon(Icons.person, size: 20,color: Colors.white,),
               ),
               onPressed: () {
                 // Navigate to profile
@@ -115,25 +122,26 @@ class _HomePageState extends State<HomePage> {
             }
           },
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Welcome Message
                 Text(
                   'Find the best care for your pet',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: GoogleFonts.inter(
+                    fontSize: 14.sp,
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
 
                 // Location Selector
                 Row(
                   children: [
                     Text(
                       'Location:',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -144,48 +152,46 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 24),
 
                 // Search Bar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[300]!),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.search, color: Colors.grey[500], size: 20),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Search facilities or services...',
-                            hintStyle: TextStyle(color: Colors.grey[500]),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          onChanged: _onSearchChanged,
-                        ),
-                      ),
-                      if (_searchController.text.isNotEmpty)
-                        IconButton(
-                          icon: Icon(Icons.clear, size: 20, color: Colors.grey[500]),
-                          onPressed: () {
-                            _searchController.clear();
-                            _onSearchChanged('');
-                          },
-                        ),
-                    ],
-                  ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: Color(0xffF1F1F1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+
                 ),
-                const SizedBox(height: 24),
+                child: Row(
+                  children: [
+                    Icon(Icons.search, color: Colors.grey[500], size: 25),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xffF1F1F1),
+                          hintText: 'Search facilities or services...',
+                          hintStyle: TextStyle(color: Colors.grey[500]),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(vertical: 14.h),
+                        ),
+                        onChanged: _onSearchChanged,
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 10.h),
 
                 // Category Filters
                 BlocBuilder<HomeBloc, HomeState>(
@@ -196,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-                const SizedBox(height: 24),
+               SizedBox(height: 10.h),
 
                 // Facilities Grid
                 BlocBuilder<LocationBloc, LocationState>(
@@ -283,17 +289,18 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Text(
                                 '${state.filteredFacilities.length} facilities in ${state.location}',
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
+                                style: GoogleFonts.inter(
+                                  fontSize: 25.sp,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               const SizedBox(height: 16),
                               GridView.builder(
                                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 16,
-                                  childAspectRatio: 0.75,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 10,
+                                  childAspectRatio: 0.65,
                                 ),
                                 itemCount: state.filteredFacilities.length,
                                 shrinkWrap: true,

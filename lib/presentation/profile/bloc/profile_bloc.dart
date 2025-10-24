@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:petcare/core/config/constants/status.dart';
 
 import '../../../data/models/user_model.dart';
 
@@ -8,129 +9,58 @@ part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(ProfileInitial()) {
+  ProfileBloc() : super(ProfileState()) {
     on<LoadProfileEvent>(_onLoadProfile);
-    on<UpdateProfileEvent>(_onUpdateProfile);
-    on<AddPetEvent>(_onAddPet);
-    on<EditPetEvent>(_onEditPet);
+
     on<DeletePetEvent>(_onDeletePet);
     on<ToggleNotificationsEvent>(_onToggleNotifications);
   }
 
   FutureOr<void> _onLoadProfile(LoadProfileEvent event, Emitter<ProfileState> emit) async {
-    emit(ProfileLoading());
+    emit(state.copyWith(status: Status.loading));
 
     // Simulate API call delay
     await Future.delayed(const Duration(milliseconds: 800));
 
     try {
       final user = _getDummyUser();
-      emit(ProfileLoaded(user: user));
+      emit(state.copyWith(status: Status.completed,user: user));
+
     } catch (e) {
-      emit(const ProfileError('Failed to load profile'));
+      emit(state.copyWith(status: Status.error));
+
     }
   }
 
-  FutureOr<void> _onUpdateProfile(UpdateProfileEvent event, Emitter<ProfileState> emit) async {
-    if (state is ProfileLoaded) {
-      emit(ProfileLoading());
+ void _onDeletePet(DeletePetEvent event, Emitter<ProfileState> emit) {
+    print(1);
+    final currentUser = state.user;
 
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      try {
-        final currentState = state as ProfileLoaded;
-        final updatedUser = User(
-          id: currentState.user.id,
-          name: event.name,
-          phone: currentState.user.phone,
-          email: event.email,
-          profileImage: currentState.user.profileImage,
-          joinedDate: currentState.user.joinedDate,
-          pets: currentState.user.pets,
-        );
-
-        emit(ProfileLoaded(
-          user: updatedUser,
-          notificationsEnabled: currentState.notificationsEnabled,
-          appVersion: currentState.appVersion,
-        ));
-
-        emit(ProfileUpdated(updatedUser));
-      } catch (e) {
-        emit(const ProfileError('Failed to update profile'));
-      }
+    // Check if user and pets exist
+    if (currentUser != null && currentUser.pets.isNotEmpty) {
+      print(2);
+      final updatedPets = List<Pet>.from(currentUser.pets)
+        ..removeWhere((pet) => pet.id == event.petId);
+      print(3);
+      final updatedUser=User(
+         id: currentUser.id,
+         name: currentUser.name,
+         phone: currentUser.phone,
+         email: currentUser.email,
+         joinedDate: currentUser.joinedDate,
+         pets:updatedPets
+       );
+      print("deleted");
+      emit(state.copyWith(user: updatedUser));
+      print(6);
     }
   }
 
-  FutureOr<void> _onAddPet(AddPetEvent event, Emitter<ProfileState> emit) {
-    if (state is ProfileLoaded) {
-      final currentState = state as ProfileLoaded;
-      final updatedPets = List<Pet>.from(currentState.user.pets)..add(event.pet);
 
-      final updatedUser = User(
-        id: currentState.user.id,
-        name: currentState.user.name,
-        phone: currentState.user.phone,
-        email: currentState.user.email,
-        profileImage: currentState.user.profileImage,
-        joinedDate: currentState.user.joinedDate,
-        pets: updatedPets,
-      );
-
-      emit(currentState.copyWith(user: updatedUser));
-      emit(PetAdded(updatedUser));
+  void _onToggleNotifications(ToggleNotificationsEvent event, Emitter<ProfileState> emit) {
+      emit(state.copyWith(notificationsEnabled: !state.notificationsEnabled));
     }
-  }
 
-  FutureOr<void> _onEditPet(EditPetEvent event, Emitter<ProfileState> emit) {
-    if (state is ProfileLoaded) {
-      final currentState = state as ProfileLoaded;
-      final updatedPets = currentState.user.pets.map((pet) {
-        return pet.id == event.pet.id ? event.pet : pet;
-      }).toList();
-
-      final updatedUser = User(
-        id: currentState.user.id,
-        name: currentState.user.name,
-        phone: currentState.user.phone,
-        email: currentState.user.email,
-        profileImage: currentState.user.profileImage,
-        joinedDate: currentState.user.joinedDate,
-        pets: updatedPets,
-      );
-
-      emit(currentState.copyWith(user: updatedUser));
-      emit(PetUpdated(updatedUser));
-    }
-  }
-
-  FutureOr<void> _onDeletePet(DeletePetEvent event, Emitter<ProfileState> emit) {
-    if (state is ProfileLoaded) {
-      final currentState = state as ProfileLoaded;
-      final updatedPets = currentState.user.pets.where((pet) => pet.id != event.petId).toList();
-
-      final updatedUser = User(
-        id: currentState.user.id,
-        name: currentState.user.name,
-        phone: currentState.user.phone,
-        email: currentState.user.email,
-        profileImage: currentState.user.profileImage,
-        joinedDate: currentState.user.joinedDate,
-        pets: updatedPets,
-      );
-
-      emit(currentState.copyWith(user: updatedUser));
-      emit(PetDeleted(updatedUser));
-    }
-  }
-
-  FutureOr<void> _onToggleNotifications(ToggleNotificationsEvent event, Emitter<ProfileState> emit) {
-    if (state is ProfileLoaded) {
-      final currentState = state as ProfileLoaded;
-      emit(currentState.copyWith(notificationsEnabled: event.enabled));
-    }
-  }
 
   User _getDummyUser() {
     return User(

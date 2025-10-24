@@ -1,47 +1,30 @@
 part of 'bookings_bloc.dart';
 
-abstract class BookingsState extends Equatable {
-  const BookingsState();
-
-  @override
-  List<Object> get props => [];
-}
-
-class BookingsInitial extends BookingsState {}
-
-class BookingsLoading extends BookingsState {}
-
-class BookingsLoaded extends BookingsState {
+ class BookingsState extends Equatable {
   final List<Booking> bookings;
   final List<Booking> upcomingBookings;
   final List<Booking> pastBookings;
+  final Status status;
 
-  const BookingsLoaded({
-    required this.bookings,
-    required this.upcomingBookings,
-    required this.pastBookings,
+  const BookingsState({
+    this.bookings=const [],
+    this.upcomingBookings= const [],
+     this.pastBookings=const[],
+    this.status=Status.initial
   });
 
+  BookingsState copyWith({
+    List<Booking>? bookings,
+     List<Booking>? upcomingBookings,
+    List<Booking>? pastBookings,
+    Status? status}){
+    return BookingsState(
+      bookings: bookings ??this.bookings,
+      upcomingBookings: upcomingBookings ?? this.upcomingBookings,
+      pastBookings: pastBookings ?? this.pastBookings,
+      status: status ?? this.status
+    );
+  }
   @override
-  List<Object> get props => [bookings, upcomingBookings, pastBookings];
-}
-
-class BookingsEmpty extends BookingsState {}
-
-class BookingCancelled extends BookingsState {
-  final String bookingId;
-
-  const BookingCancelled(this.bookingId);
-
-  @override
-  List<Object> get props => [bookingId];
-}
-
-class BookingsError extends BookingsState {
-  final String message;
-
-  const BookingsError(this.message);
-
-  @override
-  List<Object> get props => [message];
+  List<Object> get props => [bookings, upcomingBookings, pastBookings,status];
 }

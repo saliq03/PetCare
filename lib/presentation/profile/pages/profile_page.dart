@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:petcare/presentation/profile/pages/pet_management_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:petcare/common/helpers/UserPrefrences.dart';
+import 'package:petcare/core/config/constants/status.dart';
+import 'package:petcare/dependency_injection.dart';
+import 'package:petcare/presentation/auth/pages/login_page.dart';
 
-import '../../auth/bloc/auth_bloc.dart';
+import '../../../data/models/user_model.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/pet_card.dart';
 import '../widgets/settings_item.dart';
 import '../widgets/user_info_card.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  @override
-  void initState() {
-    super.initState();
-    // Load profile when the page initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProfileBloc>().add( LoadProfileEvent());
-    });
-  }
-
-  void _showLogoutConfirmationDialog() {
+  void _showLogoutConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -39,11 +30,11 @@ class _ProfilePageState extends State<ProfilePage> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              // context.read<AuthBloc>().add(const LogoutEvent());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+              sL<UserPreferences>().removeUser();
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>LoginPage()),
+                    (route) => false, );
+           },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Logout'),
           ),
         ],
@@ -51,25 +42,30 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _showDeletePetConfirmationDialog(String petId, String petName) {
+  void _showDeletePetConfirmationDialog(
+      String petId, String petName, BuildContext parentContext) {
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
+      context: parentContext,
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Delete Pet'),
         content: Text('Are you sure you want to delete $petName?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              context.read<ProfileBloc>().add(DeletePetEvent(petId));
+              Navigator.pop(dialogContext);
+
+              // Use parentContext to access the Bloc
+              parentContext.read<ProfileBloc>().add(DeletePetEvent(petId));
+
+              ScaffoldMessenger.of(parentContext).showSnackBar(
+                SnackBar(content: Text('$petName deleted successfully')),
+              );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Delete'),
           ),
         ],
@@ -77,113 +73,81 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<ProfileBloc>().add(LoadProfileEvent());
-            },
+    return BlocProvider(
+      create: (_) => ProfileBloc()..add(LoadProfileEvent()),
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(
+          backgroundColor: Colors.grey.shade200,
+          elevation: 0,
+          title: Text(
+            'Profile',
+            style: GoogleFonts.inter(fontSize: 24.sp, fontWeight: FontWeight.w700),
           ),
-        ],
-      ),
-      body: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          // Handle specific state changes if needed
-          if (state is ProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is ProfileLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        ),
+        body: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state.status == Status.initial || state.status == Status.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state is ProfileError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            if (state.status == Status.error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Something Went Wrong",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<ProfileBloc>().add(LoadProfileEvent());
+                      },
+                      child: const Text('Try Again'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+           return RefreshIndicator(
+              onRefresh: () async => context.read<ProfileBloc>().add(LoadProfileEvent()),
+              child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 children: [
-                  Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    state.message,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ProfileBloc>().add(LoadProfileEvent());
+                  UserInfoCard(
+                    user: state.user!,
+                    onEditProfile: () {
+                      // Navigate to edit profile page if needed
                     },
-                    child: const Text('Try Again'),
                   ),
+                  const SizedBox(height: 24),
+                  _buildPetsSection(context, state.user!),
+                  const SizedBox(height: 24),
+                  _buildSettingsSection(context),
+                  const SizedBox(height: 24),
+                  _buildAppInfoSection(context),
+                  const SizedBox(height: 24),
+                  _buildLogoutButton(context),
+                  const SizedBox(height: 16),
                 ],
               ),
             );
-          }
-
-          if (state is ProfileLoaded) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<ProfileBloc>().add(LoadProfileEvent());
-              },
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    // User Info
-                    UserInfoCard(
-                      user: state.user,
-                      onEditProfile: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => BlocProvider.value(
-                        //       value: context.read<ProfileBloc>(),
-                        //       child: EditProfilePage(user: state.user),
-                        //     ),
-                        //   ),
-                        // );
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
-                    // My Pets Section
-                    _buildPetsSection(context, state),
-                    const SizedBox(height: 24),
-
-                    // Settings Section
-                    _buildSettingsSection(context, state),
-                    const SizedBox(height: 24),
-
-                    // App Info Section
-                    _buildAppInfoSection(context, state),
-                    const SizedBox(height: 24),
-
-                    // Logout Button
-                    _buildLogoutButton(context),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          return const Center(child: CircularProgressIndicator());
-        },
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildPetsSection(BuildContext context, ProfileLoaded state) {
+  // ---------------- PETS SECTION ----------------
+  Widget _buildPetsSection(BuildContext context, User user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -192,21 +156,11 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(
               'My Pets',
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 24.sp),
             ),
             TextButton.icon(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => BlocProvider.value(
-                //       value: context.read<ProfileBloc>(),
-                //       child: const PetManagementPage(),
-                //     ),
-                //   ),
-                // );
+                // Navigate to PetManagementPage to add a pet
               },
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Add Pet'),
@@ -214,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         const SizedBox(height: 12),
-        if (state.user.pets.isEmpty)
+        if (user.pets.isEmpty)
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
@@ -223,38 +177,22 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             child: Column(
               children: [
-                Icon(
-                  Icons.pets,
-                  size: 48,
-                  color: Colors.grey[400],
-                ),
+                Icon(Icons.pets, size: 48, color: Colors.grey[400]),
                 const SizedBox(height: 16),
                 Text(
                   'No Pets Added',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Add your pets to manage their profiles and appointments',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[500],
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[500]),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => BlocProvider.value(
-                    //       value: context.read<ProfileBloc>(),
-                    //       child: const PetManagementPage(),
-                    //     ),
-                    //   ),
-                    // );
+                    // Navigate to PetManagementPage
                   },
                   child: const Text('Add Your First Pet'),
                 ),
@@ -263,77 +201,64 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         else
           Column(
-            children: state.user.pets.map((pet) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: PetCard(
-                  pet: pet,
-                  onEdit: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => BlocProvider.value(
-                    //       value: context.read<ProfileBloc>(),
-                    //       child: PetManagementPage(pet: pet),
-                    //     ),
-                    //   ),
-                    // );
-                  },
-                  onDelete: () => _showDeletePetConfirmationDialog(pet.id, pet.name),
-                ),
-              );
-            }).toList(),
+            children: user.pets
+                .map((pet) => PetCard(
+              pet: pet,
+              onEdit: () {
+                // Navigate to PetManagementPage with pet
+              },
+              onDelete: () => _showDeletePetConfirmationDialog(pet.id, pet.name, context),
+            ))
+                .toList(),
           ),
       ],
     );
   }
 
-  Widget _buildSettingsSection(BuildContext context, ProfileLoaded state) {
-    return Card(
-      child: Column(
-        children: [
-          SettingsItem(
-            icon: Icons.notifications,
-            title: 'Notifications',
-            subtitle: 'Appointment reminders and updates',
-            trailing: Switch(
-              value: state.notificationsEnabled,
-              onChanged: (value) {
-                context.read<ProfileBloc>().add(ToggleNotificationsEvent(value));
-              },
-            ),
-            onTap: () {},
+  // ---------------- SETTINGS SECTION ----------------
+  Widget _buildSettingsSection(BuildContext context) {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        return Card(
+          child: Column(
+            children: [
+              SettingsItem(
+                icon: Icons.notifications,
+                title: 'Notifications',
+                subtitle: 'Appointment reminders and updates',
+                trailing: Switch(
+                  value: state.notificationsEnabled,
+                  onChanged: (_) => context.read<ProfileBloc>().add(ToggleNotificationsEvent()),
+                ),
+                onTap: () {},
+              ),
+              Divider(height: 1, color: Colors.grey.shade300),
+              SettingsItem(
+                icon: Icons.security,
+                title: 'Privacy & Security',
+                onTap: () {},
+              ),
+              Divider(height: 1, color: Colors.grey.shade300),
+              SettingsItem(
+                icon: Icons.help_outline,
+                title: 'Help & Support',
+                onTap: () {},
+              ),
+              Divider(height: 1, color: Colors.grey.shade300),
+              SettingsItem(
+                icon: Icons.info_outline,
+                title: 'About PetCare',
+                onTap: () => _showAboutDialog(context),
+              ),
+            ],
           ),
-          const Divider(height: 1),
-          SettingsItem(
-            icon: Icons.security,
-            title: 'Privacy & Security',
-            onTap: () {
-              // Navigate to privacy settings
-            },
-          ),
-          const Divider(height: 1),
-          SettingsItem(
-            icon: Icons.help_outline,
-            title: 'Help & Support',
-            onTap: () {
-              // Navigate to help & support
-            },
-          ),
-          const Divider(height: 1),
-          SettingsItem(
-            icon: Icons.info_outline,
-            title: 'About PetCare',
-            onTap: () {
-              _showAboutDialog(context, state);
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildAppInfoSection(BuildContext context, ProfileLoaded state) {
+  // ---------------- APP INFO SECTION ----------------
+  Widget _buildAppInfoSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -350,15 +275,11 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Text(
                   'App Version',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  state.appVersion,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                  '1.0.0',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -368,30 +289,31 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // ---------------- LOGOUT BUTTON ----------------
   Widget _buildLogoutButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _showLogoutConfirmationDialog,
+        onPressed: () => _showLogoutConfirmationDialog(context),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: Text(
           'Logout',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700),
         ),
       ),
     );
   }
 
-  void _showAboutDialog(BuildContext context, ProfileLoaded state) {
+  // ---------------- ABOUT DIALOG ----------------
+  void _showAboutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -402,26 +324,19 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(
               'PetCare App',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            Text('Version: ${state.appVersion}'),
+            const Text('Version: 1.0.0'),
             const SizedBox(height: 8),
             Text(
               'Your trusted companion for pet care services. Find the best veterinarians, groomers, and pet facilities near you.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             ),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
         ],
       ),
     );

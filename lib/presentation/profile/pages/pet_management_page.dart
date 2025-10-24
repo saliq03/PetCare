@@ -50,11 +50,11 @@ class _PetManagementPageState extends State<PetManagementPage> {
         weight: double.parse(_weightController.text),
       );
 
-      if (widget.pet != null) {
-        context.read<ProfileBloc>().add(EditPetEvent(pet));
-      } else {
-        context.read<ProfileBloc>().add(AddPetEvent(pet));
-      }
+      // if (widget.pet != null) {
+      //   context.read<ProfileBloc>().add(EditPetEvent(pet));
+      // } else {
+      //   context.read<ProfileBloc>().add(AddPetEvent(pet));
+      // }
 
       Navigator.pop(context);
     }

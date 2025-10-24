@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../data/models/user_model.dart';
 
@@ -15,20 +17,20 @@ class UserInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
+      elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding:  EdgeInsets.symmetric(horizontal: 10.w,vertical: 20.h),
         child: Column(
           children: [
             // Profile Image and Name
             Row(
               children: [
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 80.r,
+                  height: 80.r,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -46,18 +48,19 @@ class UserInfoCard extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         user.name,
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 26.sp
                         ),
                       ),
-                      const SizedBox(height: 4),
+                       SizedBox(height: 4.h),
                       Text(
                         user.phone,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(

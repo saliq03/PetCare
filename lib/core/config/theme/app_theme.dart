@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFF6B46C1);
+  static const Color primaryColor = Color(0xFF7738F4);
   static const Color secondaryColor = Color(0xFFF7FAFC);
   static const Color accentColor = Color(0xFFF56565);
   static const Color textColor = Color(0xFF2D3748);
@@ -26,26 +26,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-      textTheme: TextTheme(
-        displayLarge: GoogleFonts.inter(
-          color: textColor,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        displayMedium: GoogleFonts.inter(
-          color: textColor,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-        bodyLarge: GoogleFonts.inter(
-          color: textColor,
-          fontSize: 16,
-        ),
-        bodyMedium: GoogleFonts.inter(
-          color: lightTextColor,
-          fontSize: 14,
-        ),
-      ),
+
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

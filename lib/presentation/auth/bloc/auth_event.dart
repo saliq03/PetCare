@@ -18,11 +18,12 @@ class SendOtpEvent extends AuthEvent {
 
 class VerifyOtpEvent extends AuthEvent {
   final String otp;
+  final BuildContext context;
 
-  const VerifyOtpEvent(this.otp);
+  const VerifyOtpEvent(this.otp,this.context);
 
   @override
-  List<Object> get props => [otp];
+  List<Object> get props => [otp,context];
 }
 
 

@@ -18,15 +18,10 @@ class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const HomePage(),
-    BlocProvider(
-      create: (context) => BookingsBloc(),
-      child: const MyBookingsPage(),
-    ),
-    BlocProvider(
-      create: (context) => ProfileBloc(),
-      child: const ProfilePage(),
-    ),
+    HomePage(),
+    MyBookingsPage(),
+    ProfilePage(),
+
   ];
 
   @override

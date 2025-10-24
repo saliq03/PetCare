@@ -1,18 +1,12 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final getIt = GetIt.instance;
+import 'common/helpers/UserPrefrences.dart';
+
+final sL = GetIt.instance;
 
 Future<void> setupDependencies() async {
   // External packages
-  final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerSingleton<SharedPreferences>(sharedPreferences);
+  sL.registerSingleton<UserPreferences>(UserPreferences());
 
-  // Repository
-  // getIt.registerSingleton<AuthRepository>(AuthRepository());
-  // getIt.registerSingleton<FacilityRepository>(FacilityRepository());
-
-  // Blocs
-  // getIt.registerFactory(() => AuthBloc());
-  // getIt.registerFactory(() => HomeBloc());
 }

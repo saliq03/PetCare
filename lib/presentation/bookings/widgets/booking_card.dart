@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../data/models/booking_model.dart';
 
@@ -22,15 +24,15 @@ class BookingCard extends StatelessWidget {
     final statusColor = _getStatusColor(booking.status);
 
     return Card(
-      elevation: 2,
+      elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.r),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -86,12 +88,14 @@ class BookingCard extends StatelessWidget {
               // Price and Actions
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     '₹${booking.price}',
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.w600,
+                    style: GoogleFonts.inter(
+                      color:  Color(0xFF3F09AB),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30.sp
                     ),
                   ),
                   if (showCancelButton && isUpcoming && booking.status == 'Confirmed')

@@ -2,15 +2,14 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:petcare/common/helpers/UserPrefrences.dart';
+import 'package:petcare/dependency_injection.dart';
 
 part 'location_event.dart';
 part 'location_state.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
-  static const String _selectedLocationKey = 'selectedLocation';
-  static const String _isCurrentLocationKey = 'isCurrentLocation';
 
   LocationBloc() : super(LocationInitial()) {
     on<LoadLocationsEvent>(_onLoadLocations);
@@ -22,11 +21,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     emit(LocationLoading());
 
     // Get saved location or use default
-    final savedLocation = 'Hyderabad';
-        // sharedPreferences.getString(_selectedLocationKey) ?? 'Hyderabad';
+    final savedLocation =await sL<UserPreferences>().getSelectedLocation()?? 'Hyderabad';
 
-    final isCurrentLocation = false;
-        // sharedPreferences.getBool(_isCurrentLocationKey) ?? false;
+    final isCurrentLocation =await sL<UserPreferences>().getIsCurrentLocation()?? false;
 
     emit(LocationLoaded(
       locations: const ['Hyderabad', 'Bengaluru', 'Pune'],
@@ -40,8 +37,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       final currentState = state as LocationLoaded;
 
       // Save to shared preferences
-      // await sharedPreferences.setString(_selectedLocationKey, event.location);
-      // await sharedPreferences.setBool(_isCurrentLocationKey, false);
+      await sL<UserPreferences>().setSelectedLocation(event.location);
+      await sL<UserPreferences>().setIsCurrentLocation(false);
 
       emit(LocationLoaded(
         locations: currentState.locations,
@@ -57,9 +54,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
       // Mock current location
       const mockCurrentLocation = 'Current Location';
+      await sL<UserPreferences>().setSelectedLocation(mockCurrentLocation);
+      await sL<UserPreferences>().setIsCurrentLocation(true);
 
-      // await sharedPreferences.setString(_selectedLocationKey, mockCurrentLocation);
-      // await sharedPreferences.setBool(_isCurrentLocationKey, true);
 
       emit(LocationLoaded(
         locations: currentState.locations,

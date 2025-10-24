@@ -1,34 +1,25 @@
 part of 'auth_bloc.dart';
 
-abstract class AuthState extends Equatable {
-  const AuthState();
+class AuthState extends Equatable {
+
+
+  final String phoneNum;
+  final String otp;
+  final Status otpStatus;
+
+  const AuthState({
+    this.phoneNum='',
+    this.otp='',
+    this.otpStatus=Status.initial
+  });
+  AuthState copyWith({String? phoneNum,String? otp,Status? otpStatus}){
+    return AuthState(
+      phoneNum: phoneNum?? this.phoneNum,
+      otp: otp ?? this.otp,
+      otpStatus: otpStatus ?? this.otpStatus
+    );
+  }
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [phoneNum,otp,otpStatus];
 }
-
-class AuthInitial extends AuthState {}
-
-class AuthLoading extends AuthState {}
-
-class OtpSent extends AuthState {
-  final String phoneNumber;
-
-  const OtpSent(this.phoneNumber);
-
-  @override
-  List<Object> get props => [phoneNumber];
-}
-
-class AuthSuccess extends AuthState {}
-
-class AuthError extends AuthState {
-  final String message;
-
-  const AuthError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class AuthLoggedOut extends AuthState {}

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:petcare/core/config/constants/status.dart';
 
 import '../../../data/models/booking_model.dart';
 
@@ -8,73 +9,40 @@ part 'bookings_event.dart';
 part 'bookings_state.dart';
 
 class BookingsBloc extends Bloc<BookingsEvent, BookingsState> {
-  BookingsBloc() : super(BookingsInitial()) {
+  BookingsBloc() : super(BookingsState()) {
     on<LoadBookingsEvent>(_onLoadBookings);
-    on<CancelBookingEvent>(_onCancelBooking);
     on<RefreshBookingsEvent>(_onRefreshBookings);
   }
 
   FutureOr<void> _onLoadBookings(LoadBookingsEvent event, Emitter<BookingsState> emit) async {
-    emit(BookingsLoading());
+    emit(state.copyWith(status: Status.loading));
 
     // Simulate API call delay
     await Future.delayed(const Duration(milliseconds: 800));
 
     try {
-      final bookings = _getDummyBookings();
+      List<Booking> bookings = _getDummyBookings();
 
-      if (bookings.isEmpty) {
-        emit(BookingsEmpty());
-      } else {
+      if (bookings.isNotEmpty) {
         final now = DateTime.now();
-        final upcomingBookings = bookings.where((booking) => booking.date.isAfter(now)).toList();
+        final List<Booking> upcomingBookings =bookings.where((booking) => booking.date.isAfter(now)).toList();
         final pastBookings = bookings.where((booking) => booking.date.isBefore(now)).toList();
 
-        emit(BookingsLoaded(
+        emit(state.copyWith(
           bookings: bookings,
           upcomingBookings: upcomingBookings,
           pastBookings: pastBookings,
+          status: Status.completed
         ));
       }
+      emit(state.copyWith(status: Status.completed));
+
+
     } catch (e) {
-      emit(const BookingsError('Failed to load bookings'));
+      emit(state.copyWith(status: Status.error));
     }
   }
 
-  FutureOr<void> _onCancelBooking(CancelBookingEvent event, Emitter<BookingsState> emit) async {
-    if (state is BookingsLoaded) {
-      emit(BookingsLoading());
-
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      try {
-        // In a real app, this would call an API to cancel the booking
-        // For now, we'll just filter it out from our dummy data
-        final currentState = state as BookingsLoaded;
-        final updatedBookings = currentState.bookings.where((booking) => booking.id != event.bookingId).toList();
-
-        if (updatedBookings.isEmpty) {
-          emit(BookingsEmpty());
-        } else {
-          final now = DateTime.now();
-          final upcomingBookings = updatedBookings.where((booking) => booking.date.isAfter(now)).toList();
-          final pastBookings = updatedBookings.where((booking) => booking.date.isBefore(now)).toList();
-
-          emit(BookingsLoaded(
-            bookings: updatedBookings,
-            upcomingBookings: upcomingBookings,
-            pastBookings: pastBookings,
-          ));
-
-          // Also emit cancellation success
-          emit(BookingCancelled(event.bookingId));
-        }
-      } catch (e) {
-        emit(const BookingsError('Failed to cancel booking'));
-      }
-    }
-  }
 
   FutureOr<void> _onRefreshBookings(RefreshBookingsEvent event, Emitter<BookingsState> emit) async {
     // Simulate refresh delay
