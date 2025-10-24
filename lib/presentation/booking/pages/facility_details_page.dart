@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../data/models/booking_model.dart';
 import '../../main/pages/main_page.dart';
@@ -102,7 +104,16 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Facility Details'),
+        leading:IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text('Facility Details',style: GoogleFonts.inter(
+        fontSize: 24.sp,
+        fontWeight: FontWeight.w700,
+      ),),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -160,7 +171,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
     final facility = state.facility;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -187,7 +198,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
 
           // Facility Name and Rating
           Row(
@@ -196,21 +207,22 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               Expanded(
                 child: Text(
                   facility.name,
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  style: GoogleFonts.inter(
+                    fontSize: 25.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: Colors.amber[50],
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Row(
                   children: [
                     const Icon(Icons.star, color: Colors.amber, size: 16),
-                    const SizedBox(width: 4),
+                     SizedBox(width: 4.w),
                     Text(
                       facility.ratingText,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -222,7 +234,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+         SizedBox(height: 8.h),
 
           // Category and Status
           Row(
@@ -235,15 +247,15 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
                 ),
                 child: Text(
                   facility.category,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+               SizedBox(width: 8.w),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:  EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
                   color: facility.isOpen ? Colors.green : Colors.red,
                   borderRadius: BorderRadius.circular(6),
@@ -265,14 +277,15 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
             children: [
               Text(
                 facility.priceRange,
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w600,
+                style: GoogleFonts.inter(
+                  color: Color(0xFF3F09AB),
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16.h),
               Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
-              const SizedBox(width: 4),
+              SizedBox(width: 4.w),
               Text(
                 facility.distanceText,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -281,7 +294,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
 
           // Description
           Text(
@@ -290,7 +303,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             facility.description,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -298,7 +311,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
 
           // Services
           Text(
@@ -307,13 +320,13 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: facility.services.map((service) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
                   borderRadius: BorderRadius.circular(20),
@@ -327,11 +340,11 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 24),
+           SizedBox(height: 24.h),
 
           // Contact Info
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             decoration: BoxDecoration(
               color: Colors.grey[50],
               borderRadius: BorderRadius.circular(12),
@@ -345,25 +358,25 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 12),
+                 SizedBox(height: 12.h),
                 _buildContactItem(Icons.location_on, facility.address),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 _buildContactItem(Icons.phone, facility.phone),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 _buildContactItem(Icons.access_time, 'Hours: ${facility.hours}'),
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32.h),
 
           // Booking Section
           Text(
             'Book an Appointment',
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
 
           // Pet Type Selector
           PetTypeSelector(
@@ -372,7 +385,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               context.read<BookingBloc>().add(SelectPetTypeEvent(petType));
             },
           ),
-          const SizedBox(height: 24),
+         SizedBox(height: 24.h),
 
           // Date Selector
           DateSelector(
@@ -381,7 +394,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               context.read<BookingBloc>().add(SelectDateEvent(date));
             },
           ),
-          const SizedBox(height: 24),
+         SizedBox(height: 24.h),
 
           // Time Slot Selector
           TimeSlotSelector(
@@ -390,7 +403,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               context.read<BookingBloc>().add(SelectTimeSlotEvent(timeSlot));
             },
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32.h),
 
           // Book Now Button
           BlocBuilder<BookingBloc, BookingState>(
@@ -408,7 +421,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
                       ConfirmBookingEvent(
                         facilityId: widget.facilityId,
                         facilityName: facility.name,
-                        petType: (state as FacilityDetailsLoaded).selectedPetType,
+                        petType: (state).selectedPetType,
                         date: state.selectedDate,
                         timeSlot: state.selectedTimeSlot,
                         price: facility.price,
@@ -424,9 +437,9 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
                     elevation: 0,
                   ),
                   child: isLoading
-                      ? const SizedBox(
-                    width: 20,
-                    height: 20,
+                      ?  SizedBox(
+                    width: 20.w,
+                    height: 20.h,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -443,7 +456,7 @@ class _FacilityDetailsPageState extends State<FacilityDetailsPage> {
               );
             },
           ),
-          const SizedBox(height: 16),
+           SizedBox(height: 16.h),
         ],
       ),
     );

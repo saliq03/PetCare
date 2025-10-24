@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DateSelector extends StatelessWidget {
   final DateTime selectedDate;
@@ -25,7 +26,7 @@ class DateSelector extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 100,
+          height: 105.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: dates.length,
@@ -41,7 +42,7 @@ class DateSelector extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => onDateSelected(date),
                   child: Container(
-                    width: 70,
+                    width: 70.w,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isSelected
@@ -73,7 +74,7 @@ class DateSelector extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                         SizedBox(height: 4.h),
                         Text(
                           date.day.toString(),
                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
@@ -81,7 +82,7 @@ class DateSelector extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h),
                         Text(
                           _getMonthName(date),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -90,8 +91,8 @@ class DateSelector extends StatelessWidget {
                         ),
                         if (isToday)
                           Container(
-                            margin: const EdgeInsets.only(top: 4),
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            margin: EdgeInsets.only(top: 4.h),
+                            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                             decoration: BoxDecoration(
                               color: isSelected ? Colors.white : Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(4),
@@ -101,7 +102,7 @@ class DateSelector extends StatelessWidget {
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: isSelected ? Theme.of(context).primaryColor : Colors.white,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 8,
+                                fontSize: 8.sp,
                               ),
                             ),
                           ),

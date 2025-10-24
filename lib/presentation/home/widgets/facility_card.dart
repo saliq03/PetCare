@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../data/models/facility_model.dart';
 
 class FacilityCard extends StatelessWidget {
@@ -144,10 +145,11 @@ class FacilityCard extends StatelessWidget {
                       // ),
                     ],
                   ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 2.h),
                   Text(
                     facility.distanceText,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: GoogleFonts.inter(
+                      fontSize: 12.sp,
                       color: Colors.grey[600],
                     ),
                   ),

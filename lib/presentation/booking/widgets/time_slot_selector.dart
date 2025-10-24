@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../data/models/time_slot_model.dart';
 
@@ -23,15 +24,15 @@ class TimeSlotSelector extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 16),
+         SizedBox(height: 16.h),
 
         // Morning Slots
         _buildTimeSlotSection(context, 'Morning', TimeSlot.morningSlots),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
 
         // Afternoon Slots
         _buildTimeSlotSection(context, 'Afternoon', TimeSlot.afternoonSlots),
-        const SizedBox(height: 20),
+         SizedBox(height: 20.h),
 
         // Evening Slots
         _buildTimeSlotSection(context, 'Evening', TimeSlot.eveningSlots),
@@ -50,7 +51,7 @@ class TimeSlotSelector extends StatelessWidget {
             color: Colors.grey[600],
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -61,14 +62,14 @@ class TimeSlotSelector extends StatelessWidget {
             return GestureDetector(
               onTap: isAvailable ? () => onTimeSlotSelected(slot.time) : null,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context).primaryColor
                       : isAvailable
                       ? Colors.white
                       : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).primaryColor

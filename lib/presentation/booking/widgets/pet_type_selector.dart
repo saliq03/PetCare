@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PetTypeSelector extends StatelessWidget {
   final String selectedPetType;
@@ -23,12 +24,13 @@ class PetTypeSelector extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 12),
-        Row(
-          children: petTypes.map((petType) {
-            final isSelected = petType == selectedPetType;
-            return Expanded(
-              child: Padding(
+         SizedBox(height: 12.sp),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: petTypes.map((petType) {
+              final isSelected = petType == selectedPetType;
+              return Padding(
                 padding: EdgeInsets.only(
                   right: petType == petTypes.last ? 0 : 8,
                 ),
@@ -41,7 +43,7 @@ class PetTypeSelector extends StatelessWidget {
                         size: 16,
                         color: isSelected ? Colors.white : Colors.grey[700],
                       ),
-                      const SizedBox(width: 6),
+                     SizedBox(width: 6.w),
                       Text(petType),
                     ],
                   ),
@@ -54,13 +56,14 @@ class PetTypeSelector extends StatelessWidget {
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                 ),
-              ),
-            );
-          }).toList(),
-        ),
+              );
+            }).toList(),
+          ),
+        )
+
       ],
     );
   }

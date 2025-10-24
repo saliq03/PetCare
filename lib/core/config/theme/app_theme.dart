@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFF7738F4);
   static const Color secondaryColor = Color(0xFFF7FAFC);
   static const Color accentColor = Color(0xFFF56565);
-  static const Color textColor = Color(0xFF2D3748);
-  static const Color lightTextColor = Color(0xFF718096);
+  static const Color textColor = Colors.black;
+  static const Color lightTextColor = Colors.black87;
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -22,11 +23,30 @@ class AppTheme {
         iconTheme: const IconThemeData(color: textColor),
         titleTextStyle: GoogleFonts.inter(
           color: textColor,
-          fontSize: 18,
+          fontSize: 18.sp,
           fontWeight: FontWeight.w600,
         ),
       ),
-
+      textTheme: TextTheme(
+        displayLarge: GoogleFonts.inter(
+          color: textColor,
+          fontSize: 24.sp,
+          fontWeight: FontWeight.bold,
+        ),
+        displayMedium: GoogleFonts.inter(
+          color: textColor,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.w600,
+        ),
+        bodyLarge: GoogleFonts.inter(
+          color: textColor,
+          fontSize: 16.sp,
+        ),
+        bodyMedium: GoogleFonts.inter(
+          color: lightTextColor,
+          fontSize: 14.sp,
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
