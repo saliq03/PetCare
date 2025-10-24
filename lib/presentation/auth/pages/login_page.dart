@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocProvider(
   create: (context) => AuthBloc(),
   child: Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Stack(
         children: [

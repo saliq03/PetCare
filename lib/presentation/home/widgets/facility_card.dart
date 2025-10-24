@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:petcare/common/widgets/ui_helper.dart';
 import '../../../data/models/facility_model.dart';
 
 class FacilityCard extends StatelessWidget {
@@ -45,9 +46,7 @@ class FacilityCard extends StatelessWidget {
                       placeholder: (context, url) => Container(
                         height: 110.h,
                         color: Colors.grey[200],
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        child: UiHelper.shimmerWidget(width: double.infinity, height: double.infinity)
                       ),
                       errorWidget: (context, url, error) => Container(
                         height: 120,
