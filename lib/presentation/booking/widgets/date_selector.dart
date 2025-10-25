@@ -91,11 +91,10 @@ class DateSelector extends StatelessWidget {
                         ),
                         if (isToday)
                           Container(
-                            margin: EdgeInsets.only(top: 4.h),
                             padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                             decoration: BoxDecoration(
                               color: isSelected ? Colors.white : Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(4.r),
                             ),
                             child: Text(
                               'Today',
