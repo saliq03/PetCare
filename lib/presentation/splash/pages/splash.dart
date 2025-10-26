@@ -35,6 +35,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
       parent: _controller,
       curve: Curves.easeInOut,
     );
+    //
 
     _controller.forward();
     _navigateToNext();
